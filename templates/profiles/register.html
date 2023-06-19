@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="container col-md-6 mt-5 mb-5">
+
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form.help_text }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mt-3">
+                <label for="id_username"><strong>Username:</strong></label>
+                {{ form.username }}
+            </div>
+            <div class="mt-3">
+                <label for="id_password1"><strong>Password1:</strong></label>
+                {{ form.password1 }}
+            </div>
+            <div class="mt-3">
+                <label for="id_password2"><strong>Password2:</strong></label>
+                {{ form.password2 }}
+            </div>
+            <div class="mt-5">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="staticBackdrop">
+                    Rules
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
