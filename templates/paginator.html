@@ -1,0 +1,35 @@
+{#{% load latest_blog %}#}
+{#{% pagination as page_obj %}#}
+
+<div class="row mt-5">
+    <div class="col-md-12 text-center">
+        <nav aria-label="Page navigation" class="text-center">
+            <ul class="pagination">
+                {% if blogs.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ blogs.previous_page_number }}#content">&lt;</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="">&lt;</a>
+                    </li>
+                {% endif %}
+
+                {% for page in blogs.paginator.page_range %}
+                    {% if page == blogs.number %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ page }}#content">{{ page }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page }}#content">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if blogs.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ blogs.next_page_number }}#content">&gt;</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"
+                                                      >&gt;</a></li>
+                {% endif %}
+
+
+            </ul>
+        </nav>
+    </div>
+</div>
