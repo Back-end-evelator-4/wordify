@@ -62,8 +62,7 @@ class SubBlogAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'blog', 'name', 'email', 'created_date')
-    fields = ('blog', 'name', 'email', 'image', 'message')
+    list_display = ('id', 'blog', 'name', 'top_level_comment_id', 'parent_comment', 'email', 'created_date')
     list_editable = ('blog', )
     search_fields = ('name', 'email')
     list_filter = ('created_date', )

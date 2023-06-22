@@ -1,6 +1,7 @@
 from django.db import models
 from profiles.models import Profile
 from django.shortcuts import reverse
+from django.db.models.signals import post_save
 
 
 class Tag(models.Model):
@@ -87,10 +88,30 @@ class Feedback(models.Model):
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     name = models.CharField(max_length=221, null=True, blank=True)
+    parent_comment = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    top_level_comment_id = models.IntegerField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     message = models.TextField()
     image = models.ImageField(null=True, blank=True, upload_to='comment')
     created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.blog.title}'s comment"
+        return f"{self.blog.title}'s comment {self.id}"
+
+    @property
+    def children(self):
+        child = Comment.objects.filter(top_level_comment_id=self.id).exclude(id=self.top_level_comment_id)
+        return child
+
+
+def comment_post_save(instance, sender, created, *args, **kwargs):
+    if created:
+        parent = instance
+        while parent.parent_comment:
+            parent = parent.parent_comment
+        instance.top_level_comment_id = parent.id
+        instance.save()
+    return instance
+
+
+post_save.connect(comment_post_save, sender=Comment)

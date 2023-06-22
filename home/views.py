@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.core.paginator import Paginator
 from .forms import CommentForm
-from .models import Tag, Category, Blog
+from .models import Tag, Category, Blog, Comment
 from django.contrib import messages
 
 
@@ -54,13 +54,20 @@ def detail_blog(request, **kwargs):
                             created_date__month=kwargs['month'], created_date__year=kwargs['year'])
     form = CommentForm()
     has_image = False
+
+    comments = Comment.objects.filter(blog_id=obj.id, parent_comment__isnull=True)
+    if request.user.is_authenticated:
+        if request.user.profile.image:
+            has_image = True
     if request.method == "POST":
         form = CommentForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             obj1 = form.save(commit=False)
-            if obj1.image:
-                has_image = True
             obj1.blog = obj
+            parent = request.GET.get('parent')
+            if parent:
+                print(parent)
+                obj1.parent_comment_id = int(parent)
             if request.user.is_authenticated:
                 full_name = []
                 if request.user.first_name:
@@ -77,15 +84,14 @@ def detail_blog(request, **kwargs):
                     obj1.image = request.user.profile.image
                     has_image = True
             obj1.save()
-            print(obj1.image)
-
             messages.success(request, 'your comment was successfully accepted')
             return redirect('.')
         messages.info(request, 'fields must not be empty')
     ctx = {
         'has_image': has_image,
         'obj': obj,
-        'form': form
+        'form': form,
+        'comments': comments
     }
     return render(request, 'home/blog-single.html', ctx)
 
