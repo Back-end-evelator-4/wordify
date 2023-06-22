@@ -1,7 +1,9 @@
 {% load simple_tags_blog %}
 {% tags_list as tags_list %}
 {% categories_list as categiries_list %}
-{% about_owner as owner %}
+{% if about_owner %}
+    {% about_owner as owner %}
+{% endif %}
 {% popular_three_blogs as popular_blogs %}
 
 {% load static %}
@@ -43,7 +45,7 @@
                             </div>
 
                             <img src="{% static 'images/views.png' %}" style="width: 20px"
-                                       alt="">{{ popular_blog.views }}
+                                 alt="">{{ popular_blog.views }}
 
                         </div>
                     </a>

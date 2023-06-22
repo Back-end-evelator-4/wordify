@@ -1,7 +1,9 @@
 {% load static %}
 {% load simple_tags_blog %}
 {% latest_three_blogs as latest %}
-{% about_owner as owner %}
+{% if about_owner %}
+    {% about_owner as owner %}
+{% endif %}
 <footer class="site-footer">
     <div class="container">
         <div class="row mb-5">
