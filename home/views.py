@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.core.paginator import Paginator
 from .forms import CommentForm
-from .models import Tag, Category, Blog
+from .models import Tag, Category, Blog, Comment
 from django.contrib import messages
 
 
@@ -52,6 +52,7 @@ def blogs(request):
 def detail_blog(request, **kwargs):
     obj = get_object_or_404(Blog, slug=kwargs['slug'], created_date__day=kwargs['day'],
                             created_date__month=kwargs['month'], created_date__year=kwargs['year'])
+    comments = Comment.objects.filter(parent_comment__isnull=True, blog_id=obj.id)
     form = CommentForm()
     has_image = False
     if request.method == "POST":
@@ -77,7 +78,6 @@ def detail_blog(request, **kwargs):
                     obj1.image = request.user.profile.image
                     has_image = True
             obj1.save()
-            print(obj1.image)
 
             messages.success(request, 'your comment was successfully accepted')
             return redirect('.')
@@ -85,7 +85,8 @@ def detail_blog(request, **kwargs):
     ctx = {
         'has_image': has_image,
         'obj': obj,
-        'form': form
+        'form': form,
+        'comments': comments,
     }
     return render(request, 'home/blog-single.html', ctx)
 

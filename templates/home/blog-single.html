@@ -60,7 +60,7 @@
                     <div class="pt-5">
                         <h3 class="mb-5">{{ obj.comment_set.count }} Comments</h3>
                         <ul class="comment-list">
-                            {% for comment in obj.comment_set.all %}
+                            {% for comment in comments %}
                                 <li class="comment">
                                     {% if comment.image %}
                                         <div class="vcard">
@@ -68,17 +68,49 @@
                                         </div>
                                     {% else %}
                                         <div class="vcard">
-                                        <img src="{% static 'images/profile.png' %}" alt="Image placeholder">
-                                    </div>
+                                            <img src="{% static 'images/profile.png' %}" alt="Image placeholder">
+                                        </div>
                                     {% endif %}
 
                                     <div class="comment-body">
-                                        <h3>{{ comment.name }}</h3>
+                                        <h3><code>{{ comment.name }}</code></h3>
                                         <div class="meta">{{ comment.created_date|date:"F d, Y P" }} </div>
                                         <p>{{ comment.message }}</p>
                                         <p><a href="#" class="reply rounded">Reply</a></p>
                                     </div>
+                                    {% if comment.comment_set.all %}
+                                        <ul class="children">
+
+                                            {% for child in comment.get_children %}
+                                                {% if child.top_level_comment_id == comment.id %}
+
+                                                    <li class="comment">
+                                                        {% if child.image %}
+                                                            <div class="vcard">
+                                                                <img src="{{ child.image.url }}"
+                                                                     alt="Image placeholder">
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="vcard">
+                                                                <img src="{% static 'images/profile.png' %}"
+                                                                     alt="Image placeholder">
+                                                            </div>
+                                                        {% endif %}
+
+                                                        <div class="comment-body">
+                                                            <h3><code>{{ child.name }}</code> to <code>{{ child.parent_comment.name }}</code></h3>
+                                                            <div class="meta">{{ child.created_date|date:"F d, Y P" }}</div>
+                                                            <p>{{ child.message }}</p>
+                                                            <p><a href="#" class="reply rounded">Reply</a></p>
+                                                        </div>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
                                 </li>
+
                             {% endfor %}
                         </ul>
 
@@ -129,8 +161,8 @@
 
                     {% include 'sidebar.html' %}
 
+                </div>
             </div>
-        </div>
     </section>
     <section class="py-5">
         <div class="container">
